@@ -23,6 +23,12 @@ module.exports = {
           return context.distFiles;
         },
 
+        dataGenerator: function(/* context */) {
+          var type = this.readConfig('type');
+          this.log('creating revision data using `' + type + '`', { verbose: true });
+          return require('./lib/data-generators')[type];
+        }
+
         scm: function(/* context */) {
           return require('./lib/scm-data-generators')['git'];
         }
@@ -51,12 +57,12 @@ module.exports = {
       },
 
       _getData: function() {
-        var type = this.readConfig('type');
-        this.log('creating revision data using `' + type + '`', { verbose: true });
-        var DataGenerator = require('./lib/data-generators')[type];
-        return new DataGenerator({
-          plugin: this
-        }).generate();
+        var DataGenerator = this.readConfig('dataGenerator');
+        if (DataGenerator) {
+          return new DataGenerator({plugin: this}).generate();
+        } else {
+          return RSVP.resolve();
+        }
       },
 
       _getScmData: function() {
