@@ -27,7 +27,7 @@ module.exports = {
           var type = this.readConfig('type');
           this.log('creating revision data using `' + type + '`', { verbose: true });
           return require('./lib/data-generators')[type];
-        }
+        },
 
         scm: function(/* context */) {
           return require('./lib/scm-data-generators')['git'];
